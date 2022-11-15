@@ -5,10 +5,11 @@
 
 
 typedef struct{
-		int valores[2];
-	}peca;
+		int ultimo_uso;
+        int bit_referencia;
+	}pagina;
 	
-typedef peca tp_item;
+typedef pagina tp_item;
 
 typedef struct tp_no{
 tp_item info;
@@ -56,16 +57,17 @@ void imprime_listase(tp_listase *lista){
 	tp_listase *atu;
 	atu=lista;
 	while (atu!=NULL){
-		printf("[%i|%i] ",atu->info.valores[0],atu->info.valores[1]);
+		printf("[%i|%i] ",atu->info.ultimo_uso,atu->info.bit_referencia);
 		atu=atu->prox;
 	}
+    printf("\n");
 }
 
 
 tp_listase *busca_listase(tp_listase *lista,tp_item e){
     tp_listase *atu;
     atu=lista;
-    while((atu!=NULL) && (atu->info.valores[0]!=e.valores[0]) && (atu->info.valores[1]!=e.valores[1])){
+    while((atu!=NULL) && (atu->info.ultimo_uso!=e.ultimo_uso) && (atu->info.bit_referencia!=e.bit_referencia)){
         atu=atu-> prox;
     }
     if(atu ==NULL)return NULL;
@@ -108,7 +110,7 @@ int remove_listase_do_fim(tp_listase **lista, tp_item *e){
     tp_listase * ant, *atu;
     atu=*lista;
     ant=NULL;
-    while((atu->info.valores[0]!=e.valores[0]) || (atu->info.valores[1]!=e.valores[1])){
+    while((atu->info.ultimo_uso!=e.ultimo_uso) || (atu->info.bit_referencia!=e.bit_referencia)){
         ant = atu;
         atu = atu ->prox;
     }

@@ -17,6 +17,7 @@ CC=gcc
 
 # Flags for compiler
 CC_FLAGS=-c         \
+		 -g         \
          -Wextra    \
          -Wall      \
 		 -std=c11   \
