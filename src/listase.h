@@ -3,10 +3,12 @@
 #include<stdio.h>
 #include <stdlib.h>
 
+#define TAU 1000
 
 typedef struct{
-		int ultimo_uso;
-        int bit_referencia;
+		time_t ultimo_uso;
+        int bit_R; // Bit de referencia
+        int bit_M; // Bit de sujeira
 	}pagina;
 	
 typedef pagina tp_item;
@@ -57,7 +59,7 @@ void imprime_listase(tp_listase *lista){
 	tp_listase *atu;
 	atu=lista;
 	while (atu!=NULL){
-		printf("[%i|%i] ",atu->info.ultimo_uso,atu->info.bit_referencia);
+		printf("[%i|%i|%i] ",atu->info.ultimo_uso,atu->info.bit_R,atu->info.bit_M);
 		atu=atu->prox;
 	}
     printf("\n");
@@ -67,7 +69,7 @@ void imprime_listase(tp_listase *lista){
 tp_listase *busca_listase(tp_listase *lista,tp_item e){
     tp_listase *atu;
     atu=lista;
-    while((atu!=NULL) && (atu->info.ultimo_uso!=e.ultimo_uso) && (atu->info.bit_referencia!=e.bit_referencia)){
+    while((atu!=NULL) && (atu->info.ultimo_uso!=e.ultimo_uso) && (atu->info.bit_R!=e.bit_R)){
         atu=atu-> prox;
     }
     if(atu ==NULL)return NULL;
@@ -110,7 +112,7 @@ int remove_listase_do_fim(tp_listase **lista, tp_item *e){
     tp_listase * ant, *atu;
     atu=*lista;
     ant=NULL;
-    while((atu->info.ultimo_uso!=e.ultimo_uso) || (atu->info.bit_referencia!=e.bit_referencia)){
+    while((atu->info.ultimo_uso!=e.ultimo_uso) || (atu->info.bit_R!=e.bit_R) || (atu->info.bit_M!=e.bit_M)){
         ant = atu;
         atu = atu ->prox;
     }
@@ -124,5 +126,45 @@ int remove_listase_do_fim(tp_listase **lista, tp_item *e){
     atu = NULL;
     return 1;
 } 
+
+void clean_bit_r(tp_listase *lista){
+    tp_listase *atu;
+    atu=lista;
+    atu->info.bit_R = 0;    
+}
+
+void clean_bit_m(tp_listase *lista){
+    tp_listase *atu;
+    atu=lista;
+    atu->info.bit_M = 0;    
+}
+
+void wsclock(tp_listase *lista, time_t tempo_total){
+    tp_listase *ant, *atu;
+    if (atu->info.bit_R == 1){
+        clean_bit_r(atu);
+        ant = atu;
+        atu = atu->prox;
+
+    } else if(atu->info.bit_R == 0){
+        if ((tempo_total-atu->info.ultimo_uso)>TAU)
+        {
+            if (atu->info.bit_M == 1)
+            {
+                clean_bit_m(atu);
+                ant = atu;
+                atu = atu->prox;
+            } else {
+                atu->info.ultimo_uso = NULL; // trocar depois
+                atu->info.bit_M = 1;
+                atu->info.bit_R = 1;
+            }
+        } else {
+            ant = atu;
+            atu = atu->prox;
+        }
+    
+    }
+}
 
 #endif
