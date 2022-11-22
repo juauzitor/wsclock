@@ -7,7 +7,8 @@
 #define TAU 1000
 
 typedef struct{
-		double ultimo_uso;
+		int id_pagina;
+        double ultimo_uso;
         int bit_R; // Bit de referencia
         int bit_M; // Bit de sujeira
 	}pagina;
@@ -16,6 +17,7 @@ typedef pagina tp_item;
 
 typedef struct tp_no{
 tp_item info;
+struct tp_no *ant;
 struct tp_no *prox;
 }tp_listase;
 
@@ -36,23 +38,25 @@ tp_listase *aloca_listase(){
 }
 
 int insere_listase_no_fim(tp_listase **l, tp_item e){
-tp_listase *novo_no, *atu;
-novo_no=aloca_listase();
-if(novo_no==NULL) return 0;
-//atribuir valores para o novo nó;
-novo_no->info= e;
-novo_no->prox=NULL;
-//finaliza o encadeamento do nó
-if(listase_vazia(*l)){
-	*l=novo_no;
-} else{
-	atu = *l;
-	while(atu->prox!=NULL){
-		atu=atu->prox;
-	}
-	atu->prox=novo_no;
-}
-return 1; 
+    tp_listase *novo_no, *atu;
+    novo_no=aloca_listase();
+    if(novo_no==NULL) return 0;
+    //atribuir valores para o novo nó;
+    novo_no->info= e;
+    novo_no->prox=NULL;
+    //finaliza o encadeamento do nó
+    if(listase_vazia(*l)){
+	    novo_no->ant = NULL;
+        *l=novo_no;
+    } else{
+    	atu = *l;
+	    while(atu->prox!=NULL){
+		    atu=atu->prox;
+	    }
+        novo_no->ant = atu;
+        atu->prox=novo_no;
+    }
+    return 1; 
 }
 
 
@@ -60,8 +64,8 @@ void imprime_listase(tp_listase *lista){
 	tp_listase *atu;
 	atu=lista;
 	while (atu!=NULL){
-		printf("[%.1lf|%i|%i] ",atu->info.ultimo_uso,atu->info.bit_R,atu->info.bit_M);
-		atu=atu->prox;
+	    printf("[id: %i|ultimo uso: %.1lf|bit R: %i] ", atu->info.id_pagina,atu->info.ultimo_uso,atu->info.bit_R);
+        atu=atu->prox;
 	}
     printf("\n");
 }
@@ -70,10 +74,10 @@ void imprime_listase(tp_listase *lista){
 tp_listase *busca_listase(tp_listase *lista,tp_item e){
     tp_listase *atu;
     atu=lista;
-    while((atu!=NULL) && (atu->info.ultimo_uso!=e.ultimo_uso) && (atu->info.bit_R!=e.bit_R)){
+    while((atu!=NULL) && (atu->info.id_pagina!=e.id_pagina)){
         atu=atu-> prox;
     }
-    if(atu ==NULL)return NULL;
+    if(atu == NULL)return NULL;
     return atu;
 }
 
@@ -100,32 +104,81 @@ void clean_bit_m(tp_listase *lista){
     atu->info.bit_M = 0;    
 }
 
-void wsclock(tp_listase *lista, double tempo_total){
+void wsclock(tp_listase *lista, double tempo_total, int id, time_t start){
     tp_listase *ant, *atu;
-    if (atu->info.bit_R == 1){
-        clean_bit_r(atu);
-        ant = atu;
-        atu = atu->prox;
-
-    } else if(atu->info.bit_R == 0){
-        if ((tempo_total-atu->info.ultimo_uso)>TAU)
-        {
-            if (atu->info.bit_M == 1)
-            {
-                clean_bit_m(atu);
-                ant = atu;
-                atu = atu->prox;
-            } else {
-                atu->info.ultimo_uso = 0; // trocar depois
-                atu->info.bit_M = 1;
-                atu->info.bit_R = 1;
-            }
-        } else {
+    time_t end;
+    atu=lista;
+    int count_clean=0;
+    while (atu!=NULL){
+        if (atu->info.bit_R == 1){
+            clean_bit_r(atu);
             ant = atu;
             atu = atu->prox;
+        } else if(atu->info.bit_R == 0){
+            if ((tempo_total-atu->info.ultimo_uso)>TAU){
+                if (atu->info.bit_M == 1){
+                    clean_bit_m(atu);
+                    count_clean++;
+                    ant = atu;
+                    atu = atu->prox;
+                } else {
+                    end = time(NULL);
+                    atu->info.id_pagina = id;
+                    atu->info.ultimo_uso = difftime(end, start);
+                    atu->info.bit_M = 1;
+                    atu->info.bit_R = 1;
+                    return;
+                }
+            } else {
+                ant = atu;
+                atu = atu->prox;
+            }
         }
-    
     }
+    atu=lista;
+    if (count_clean > 0){
+        while (atu!=NULL){
+            if (atu->info.bit_M == 0){
+                end = time(NULL);
+                atu->info.id_pagina = id;
+                atu->info.ultimo_uso = difftime(end, start);
+                atu->info.bit_M = 1;
+                atu->info.bit_R = 1;
+                return;
+            }
+            atu = atu->prox;
+        }
+    } else {
+        end = time(NULL);
+        atu->info.id_pagina = id;
+        atu->info.ultimo_uso = difftime(end, start);
+        atu->info.bit_M = 1;
+        atu->info.bit_R = 1;
+        return;
+    }
+}
+    void wsclockt(tp_listase *lista){
+    tp_listase *ant, *atu;
+    atu=lista;
+    int count_dirty;
+    while (atu!=NULL){
+        if (atu->info.bit_R == 1){
+            clean_bit_r(atu);
+            ant = atu;
+            atu = atu->prox;    
+        }
+    }
+    atu=lista;
+    printf("%d", atu->info.id_pagina);
+    while (atu!=NULL)
+    {
+        if (atu->info.bit_M == 1){
+            clean_bit_m(atu);
+            ant = atu;
+            atu = atu->prox;    
+        }
+    }
+    
 }
 
 #endif
