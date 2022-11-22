@@ -4,7 +4,7 @@
 #include <stdlib.h>
 #include <time.h>
 
-#define TAU 1000
+#define TAU 0
 
 typedef struct{
 		int id_pagina;

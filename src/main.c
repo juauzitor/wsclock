@@ -13,8 +13,8 @@ int main (int argc, char *argv[]){
     l = inicializa_listase();
 
     for (int i = 0; i < num_pages; i++){
-        scanf("%d", &m);
         e.id_pagina = i;
+        scanf("%d", &m);
         end = time(NULL);
         e.ultimo_uso = difftime(end, start);
         e.bit_R = 1;
@@ -34,7 +34,8 @@ int main (int argc, char *argv[]){
         }
     }
     //wsclockt(l);
-    wsclock(l, 0, 7, start);
+    wsclock(l, difftime(end, start), 7, start);
+    wsclock(l, difftime(end, start), 8, start);
     end = time(NULL);
     double tempo = difftime(end, start);
     printf("Tempo de execucao do Codigo:%.1lf\n", tempo);
