@@ -1,12 +1,13 @@
 #ifndef LISTASE_H
 #define LISTASE_H
-#include<stdio.h>
+#include <stdio.h>
 #include <stdlib.h>
+#include <time.h>
 
 #define TAU 1000
 
 typedef struct{
-		time_t ultimo_uso;
+		double ultimo_uso;
         int bit_R; // Bit de referencia
         int bit_M; // Bit de sujeira
 	}pagina;
@@ -59,7 +60,7 @@ void imprime_listase(tp_listase *lista){
 	tp_listase *atu;
 	atu=lista;
 	while (atu!=NULL){
-		printf("[%i|%i|%i] ",atu->info.ultimo_uso,atu->info.bit_R,atu->info.bit_M);
+		printf("[%.1lf|%i|%i] ",atu->info.ultimo_uso,atu->info.bit_R,atu->info.bit_M);
 		atu=atu->prox;
 	}
     printf("\n");
@@ -87,46 +88,6 @@ int tamanho_listase(tp_listase *lista){
     return cont;
 }
 
-int remove_listase_do_fim(tp_listase **lista, tp_item *e){
-    tp_listase *atu;
-    tp_listase *ant;
-    if(listase_vazia(*lista)) return 0;
-	atu=*lista;
-    
-    while(atu->prox != NULL){
-        ant = atu;
-		atu = atu ->prox;
-    }
-    
-	*e = atu->info;
-    ant->prox=NULL;
-    
-    free(atu);
-    atu = NULL;
-    return 1;
-}
- 
- 
- 
- int remove_listase_n(tp_listase **lista, tp_item e){
-    tp_listase * ant, *atu;
-    atu=*lista;
-    ant=NULL;
-    while((atu->info.ultimo_uso!=e.ultimo_uso) || (atu->info.bit_R!=e.bit_R) || (atu->info.bit_M!=e.bit_M)){
-        ant = atu;
-        atu = atu ->prox;
-    }
-    if(atu == NULL)return 0;
-    if(ant == NULL){
-        *lista = atu -> prox;
-    }else{
-        ant -> prox = atu -> prox;
-    }
-    free(atu);
-    atu = NULL;
-    return 1;
-} 
-
 void clean_bit_r(tp_listase *lista){
     tp_listase *atu;
     atu=lista;
@@ -139,7 +100,7 @@ void clean_bit_m(tp_listase *lista){
     atu->info.bit_M = 0;    
 }
 
-void wsclock(tp_listase *lista, time_t tempo_total){
+void wsclock(tp_listase *lista, double tempo_total){
     tp_listase *ant, *atu;
     if (atu->info.bit_R == 1){
         clean_bit_r(atu);
@@ -155,7 +116,7 @@ void wsclock(tp_listase *lista, time_t tempo_total){
                 ant = atu;
                 atu = atu->prox;
             } else {
-                atu->info.ultimo_uso = NULL; // trocar depois
+                atu->info.ultimo_uso = 0; // trocar depois
                 atu->info.bit_M = 1;
                 atu->info.bit_R = 1;
             }
