@@ -70,11 +70,10 @@ void imprime_listase(tp_listase *lista){
     printf("\n");
 }
 
-
-tp_listase *busca_listase(tp_listase *lista,tp_item e){
+tp_listase *busca_listase(tp_listase *lista,int e){
     tp_listase *atu;
     atu=lista;
-    while((atu!=NULL) && (atu->info.id_pagina!=e.id_pagina)){
+    while((atu!=NULL) && (atu->info.id_pagina!=e)){
         atu=atu-> prox;
     }
     if(atu == NULL)return NULL;
@@ -107,20 +106,30 @@ void clean_bit_m(tp_listase *lista){
 void wsclock(tp_listase *lista, double tempo_total, int id, time_t start){
     tp_listase *ant, *atu;
     time_t end;
-    atu=lista;
-    int count_clean=0;
-    while (atu!=NULL){
+    int pag_atual = id - 1;
+    atu=busca_listase(lista, pag_atual);
+    int count_clean=0, saida=0;
+    while (saida == 0 || atu->info.id_pagina != pag_atual){
         if (atu->info.bit_R == 1){
             clean_bit_r(atu);
             ant = atu;
-            atu = atu->prox;
+            if (atu->prox!=NULL){
+                atu = atu->prox;
+            } else {
+                atu = lista;
+            }            
+            saida = 1;
         } else if(atu->info.bit_R == 0){
             if ((tempo_total-atu->info.ultimo_uso)>TAU){
                 if (atu->info.bit_M == 1){
                     clean_bit_m(atu);
                     count_clean++;
-                    ant = atu;
-                    atu = atu->prox;
+                    if (atu->prox!=NULL){
+                        atu = atu->prox;
+                    } else {
+                        atu = lista;
+                    }            
+                saida = 1;
                 } else {
                     end = time(NULL);
                     atu->info.id_pagina = id;
@@ -130,14 +139,19 @@ void wsclock(tp_listase *lista, double tempo_total, int id, time_t start){
                     return;
                 }
             } else {
-                ant = atu;
-                atu = atu->prox;
+                if (atu->prox!=NULL){
+                    atu = atu->prox;
+                } else {
+                    atu = lista;
+                }            
+                saida = 1;
             }
         }
     }
-    atu=lista;
+    atu=busca_listase(lista, pag_atual);
+    saida=0;
     if (count_clean > 0){
-        while (atu!=NULL){
+        while (saida == 0 || atu->info.id_pagina != pag_atual){
             if (atu->info.bit_M == 0){
                 end = time(NULL);
                 atu->info.id_pagina = id;
@@ -146,7 +160,11 @@ void wsclock(tp_listase *lista, double tempo_total, int id, time_t start){
                 atu->info.bit_R = 1;
                 return;
             }
-            atu = atu->prox;
+            if (atu->prox!=NULL){
+                atu = atu->prox;
+            } else {
+                atu = lista;
+            } 
         }
     } else {
         end = time(NULL);
@@ -156,29 +174,6 @@ void wsclock(tp_listase *lista, double tempo_total, int id, time_t start){
         atu->info.bit_R = 1;
         return;
     }
-}
-    void wsclockt(tp_listase *lista){
-    tp_listase *ant, *atu;
-    atu=lista;
-    int count_dirty;
-    while (atu!=NULL){
-        if (atu->info.bit_R == 1){
-            clean_bit_r(atu);
-            ant = atu;
-            atu = atu->prox;    
-        }
-    }
-    atu=lista;
-    printf("%d", atu->info.id_pagina);
-    while (atu!=NULL)
-    {
-        if (atu->info.bit_M == 1){
-            clean_bit_m(atu);
-            ant = atu;
-            atu = atu->prox;    
-        }
-    }
-    
 }
 
 #endif
