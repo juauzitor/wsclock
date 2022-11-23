@@ -111,6 +111,7 @@ void wsclock(tp_listase *lista, double tempo_total, int id, time_t start){
     int count_clean=0, saida=0;
     while (saida == 0 || atu->info.id_pagina != pag_atual){
         if (atu->info.bit_R == 1){
+            printf("Pagina atual:\n[id: %i|ultimo uso: %.1lf|bit R: %i]\n", atu->info.id_pagina,atu->info.ultimo_uso,atu->info.bit_R);
             clean_bit_r(atu);
             ant = atu;
             if (atu->prox!=NULL){
@@ -122,6 +123,7 @@ void wsclock(tp_listase *lista, double tempo_total, int id, time_t start){
         } else if(atu->info.bit_R == 0){
             if ((tempo_total-atu->info.ultimo_uso)>TAU){
                 if (atu->info.bit_M == 1){
+                    printf("Pagina atual:\n[id: %i|ultimo uso: %.1lf|bit R: %i]\n", atu->info.id_pagina,atu->info.ultimo_uso,atu->info.bit_R);
                     clean_bit_m(atu);
                     count_clean++;
                     if (atu->prox!=NULL){
@@ -131,6 +133,9 @@ void wsclock(tp_listase *lista, double tempo_total, int id, time_t start){
                     }            
                 saida = 1;
                 } else {
+                    printf("--------------------------------------\n");
+                    printf("Pagina subistituida:\n[id: %i|ultimo uso: %.1lf|bit R: %i]\n", atu->info.id_pagina,atu->info.ultimo_uso,atu->info.bit_R);
+                    printf("--------------------------------------\n");
                     end = time(NULL);
                     atu->info.id_pagina = id;
                     atu->info.ultimo_uso = difftime(end, start);
@@ -139,6 +144,7 @@ void wsclock(tp_listase *lista, double tempo_total, int id, time_t start){
                     return;
                 }
             } else {
+                printf("Pagina atual:\n[id: %i|ultimo uso: %.1lf|bit R: %i]\n", atu->info.id_pagina,atu->info.ultimo_uso,atu->info.bit_R);
                 if (atu->prox!=NULL){
                     atu = atu->prox;
                 } else {
@@ -153,6 +159,9 @@ void wsclock(tp_listase *lista, double tempo_total, int id, time_t start){
     if (count_clean > 0){
         while (saida == 0 || atu->info.id_pagina != pag_atual){
             if (atu->info.bit_M == 0){
+                printf("--------------------------------------\n");
+                printf("Pagina subistituida:\n[id: %i|ultimo uso: %.1lf|bit R: %i]\n", atu->info.id_pagina,atu->info.ultimo_uso,atu->info.bit_R);
+                printf("--------------------------------------\n");
                 end = time(NULL);
                 atu->info.id_pagina = id;
                 atu->info.ultimo_uso = difftime(end, start);
@@ -160,6 +169,7 @@ void wsclock(tp_listase *lista, double tempo_total, int id, time_t start){
                 atu->info.bit_R = 1;
                 return;
             }
+            printf("Pagina atual:\n[id: %i|ultimo uso: %.1lf|bit R: %i]\n", atu->info.id_pagina,atu->info.ultimo_uso,atu->info.bit_R);
             if (atu->prox!=NULL){
                 atu = atu->prox;
             } else {
@@ -167,6 +177,9 @@ void wsclock(tp_listase *lista, double tempo_total, int id, time_t start){
             } 
         }
     } else {
+        printf("--------------------------------------\n");
+        printf("Pagina subistituida:\n[id: %i|ultimo uso: %.1lf|bit R: %i]\n", atu->info.id_pagina,atu->info.ultimo_uso,atu->info.bit_R);
+        printf("--------------------------------------\n");
         end = time(NULL);
         atu->info.id_pagina = id;
         atu->info.ultimo_uso = difftime(end, start);

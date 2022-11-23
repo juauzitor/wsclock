@@ -14,7 +14,7 @@ int main (int argc, char *argv[]){
 
     for (int i = 0; i < num_pages; i++){
         e.id_pagina = i;
-        //scanf("%d", &m);
+        scanf("%d", &m);
         end = time(NULL);
         e.ultimo_uso = difftime(end, start);
         e.bit_R = 1;
@@ -25,6 +25,10 @@ int main (int argc, char *argv[]){
     while (op < 3){
         n++;
         wsclock(l, difftime(end, start), n,start);
+        printf("--------------------------------------\n");
+        printf("Lista das paginas:\n");
+        imprime_listase(l);
+        printf("--------------------------------------\n");
         op++;
         //scanf("%d", &op);
         
