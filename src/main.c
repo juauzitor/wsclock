@@ -14,21 +14,21 @@ int main (int argc, char *argv[]){
 
     for (int i = 0; i < num_pages; i++){
         e.id_pagina = i;
-        scanf("%d", &m);
+        //scanf("%d", &m);
         end = time(NULL);
         e.ultimo_uso = difftime(end, start);
         e.bit_R = 1;
         e.bit_M = 1;
         insere_listase_no_fim(&l, e);
     }
-    n = 4;
-    while (op < 3){
-        n++;
-        wsclock(l, difftime(end, start), n,start);
+    while (op < 100){
+        end = time(NULL);
+        wsclock(l, difftime(end, start), num_pages, start);
         printf("--------------------------------------\n");
         printf("Lista das paginas:\n");
         imprime_listase(l);
         printf("--------------------------------------\n");
+        num_pages++;
         op++;
         //scanf("%d", &op);
         
