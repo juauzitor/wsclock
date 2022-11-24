@@ -91,13 +91,13 @@ int tamanho_listase(tp_listase *lista){
     return cont;
 }
 
-void clean_bit_r(tp_listase *lista){
+void clean_bit_r(tp_listase *lista){ // Funça para limpar o  bit referênciação
     tp_listase *atu;
     atu=lista;
     atu->info.bit_R = 0;    
 }
 
-void clean_bit_m(tp_listase *lista){
+void clean_bit_m(tp_listase *lista){ // Função para limpar o bit de sujeira
     tp_listase *atu;
     atu=lista;
     atu->info.bit_M = 0;    
@@ -132,9 +132,9 @@ void wsclock(tp_listase *lista, double tempo_total, int id, time_t start){
                     }
                     saida = 1; // Variavel para funcionamento correto do laço condicional
                 saida = 1;
-                } else {// Caso a pagina esteja limpa ela será subistituida
+                } else {// Caso a pagina esteja limpa ela será substituida
                     printf("--------------------------------------\n");
-                    printf("Pagina subistituida:\n[id: %i|ultimo uso: %.1lf|bit R: %i]\n", atu->info.id_pagina,atu->info.ultimo_uso,atu->info.bit_R);
+                    printf("Pagina substituida:\n[id: %i|ultimo uso: %.1lf|bit R: %i]\n", atu->info.id_pagina,atu->info.ultimo_uso,atu->info.bit_R);
                     printf("--------------------------------------\n");
                     end = time(NULL);// Zerando o final do cronometro
                     // Sustituição dos valores da pagina para os valores das novas paginas
@@ -161,7 +161,7 @@ void wsclock(tp_listase *lista, double tempo_total, int id, time_t start){
         while (saida == 0 || atu->info.id_pagina != pag_atual){// Busca a pagina até substituila
             if (atu->info.bit_M == 0){
                 printf("--------------------------------------\n");
-                printf("Pagina subistituida:\n[id: %i|ultimo uso: %.1lf|bit R: %i]\n", atu->info.id_pagina,atu->info.ultimo_uso,atu->info.bit_R);
+                printf("Pagina substituida:\n[id: %i|ultimo uso: %.1lf|bit R: %i]\n", atu->info.id_pagina,atu->info.ultimo_uso,atu->info.bit_R);
                 printf("--------------------------------------\n");
                 end = time(NULL);
                 // Sustituição dos valores da pagina para os valores das novas paginas
@@ -178,9 +178,9 @@ void wsclock(tp_listase *lista, double tempo_total, int id, time_t start){
                 atu = lista;
             } 
         }
-    } else {// Caso não tenha sido possivel substituir nenhuma pagina com as exigencias, forçando a subistituir a primeira pagina que aparecer
+    } else {// Caso não tenha sido possivel substituir nenhuma pagina com as exigencias, forçando a substituir a primeira pagina que aparecer
         printf("--------------------------------------\n");
-        printf("Pagina subistituida:\n[id: %i|ultimo uso: %.1lf|bit R: %i]\n", atu->info.id_pagina,atu->info.ultimo_uso,atu->info.bit_R);
+        printf("Pagina substituida:\n[id: %i|ultimo uso: %.1lf|bit R: %i]\n", atu->info.id_pagina,atu->info.ultimo_uso,atu->info.bit_R);
         printf("--------------------------------------\n");
         end = time(NULL);
         // Sustituição dos valores da pagina para os valores das novas paginas
