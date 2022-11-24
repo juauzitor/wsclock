@@ -13,6 +13,7 @@ int main (int argc, char *argv[]){
     
     printf("Digite o numéro de pagnias que deseja: ");
     scanf("%d", &num_pages);
+    // Alocando paginas na lista
     for (int i = 0; i < num_pages; i++){
         sleep(.7);
         e.id_pagina = i;
@@ -22,6 +23,7 @@ int main (int argc, char *argv[]){
         e.bit_M = 1;
         insere_listase_no_fim(&l, e);
     }
+    // Laço para inserir pagina baseado na vontade do usuário
     while (op != 2){
 
         end = time(NULL);
