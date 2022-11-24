@@ -1,3 +1,5 @@
+// Autores: João Vitor Mendes e Joseph Neiva
+
 #include <stdio.h>
 #include "listase.h"
 #include <time.h>
@@ -11,7 +13,7 @@ int main (int argc, char *argv[]){
     tp_item e;
     l = inicializa_listase();
     
-    printf("Digite o numéro de pagnias que deseja: ");
+    printf("Digite o numéro de paginas que deseja: ");
     scanf("%d", &num_pages);
     // Alocando paginas na lista
     for (int i = 0; i < num_pages; i++){
