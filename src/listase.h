@@ -103,13 +103,12 @@ void clean_bit_m(tp_listase *lista){ // Função para limpar o bit de sujeira
     atu->info.bit_M = 0;    
 }
 
-void wsclock(tp_listase *lista, double tempo_total, int id, time_t start){
+void wsclock(tp_listase *lista, double tempo_total, int *pag_atual,int id, time_t start){
     tp_listase *atu;
     time_t end;
-    int pag_atual = id - 1; // Pagina em que o ponteiro do relógio está
-    atu=busca_listase(lista, pag_atual); // Alocar o nó em que o ponteiro está
+    atu=busca_listase(lista, *pag_atual); // Alocar o nó em que o ponteiro está
     int count_clean=0, saida=0;
-    while (saida == 0 || atu->info.id_pagina != pag_atual){// Laço para substituição das páginas
+    while (saida == 0 || atu->info.id_pagina != *pag_atual){// Laço para substituição das páginas
         if (atu->info.bit_R == 1){// Condicional para verificar se o bit referêncial é igual a 1
             printf("Pagina atual:\n[id: %i|ultimo uso: %.1lf|bit R: %i]\n", atu->info.id_pagina,atu->info.ultimo_uso,atu->info.bit_R);
             clean_bit_r(atu);// Lipando o bit de referência da pagina
@@ -142,6 +141,12 @@ void wsclock(tp_listase *lista, double tempo_total, int id, time_t start){
                     atu->info.ultimo_uso = difftime(end, start);
                     atu->info.bit_M = 1;
                     atu->info.bit_R = 1;
+                    if (atu->prox!=NULL){//Condicional para verificar se o próximo nó é diferênte de nulo
+                        atu = atu->prox;// Avançando a lista para o proximo nó
+                    } else {
+                        atu = lista;// Voltando a lista para o primeiro nó 
+                    }
+                    *pag_atual = atu->info.id_pagina; // Pegando o valor do id da proxima pagina
                     return;// Encerramento da função
                 }
             } else {// Caso a idade da pagina seja menor que o TAU
@@ -155,10 +160,10 @@ void wsclock(tp_listase *lista, double tempo_total, int id, time_t start){
             }
         }
     }
-    atu=busca_listase(lista, pag_atual);// Resetando a lista para o começo de onde estava o ponteiro inicialmente
+    atu=busca_listase(lista, *pag_atual);// Resetando a lista para o começo de onde estava o ponteiro inicialmente
     saida=0;
     if (count_clean > 0){// Verificando se ouve a limpeza de alguma pagina
-        while (saida == 0 || atu->info.id_pagina != pag_atual){// Busca a pagina até substituila
+        while (saida == 0 || atu->info.id_pagina != *pag_atual){// Busca a pagina até substituila
             if (atu->info.bit_M == 0){
                 printf("--------------------------------------\n");
                 printf("Pagina substituida:\n[id: %i|ultimo uso: %.1lf|bit R: %i]\n", atu->info.id_pagina,atu->info.ultimo_uso,atu->info.bit_R);
@@ -169,6 +174,12 @@ void wsclock(tp_listase *lista, double tempo_total, int id, time_t start){
                 atu->info.ultimo_uso = difftime(end, start);
                 atu->info.bit_M = 1;
                 atu->info.bit_R = 1;
+                if (atu->prox!=NULL){//Condicional para verificar se o próximo nó é diferênte de nulo
+                        atu = atu->prox;// Avançando a lista para o proximo nó
+                    } else {
+                        atu = lista;// Voltando a lista para o primeiro nó 
+                    }
+                    *pag_atual = atu->info.id_pagina; // Pegando o valor do id da proxima pagina
                 return;
             }
             printf("Pagina atual:\n[id: %i|ultimo uso: %.1lf|bit R: %i]\n", atu->info.id_pagina,atu->info.ultimo_uso,atu->info.bit_R);
@@ -188,6 +199,12 @@ void wsclock(tp_listase *lista, double tempo_total, int id, time_t start){
         atu->info.ultimo_uso = difftime(end, start);
         atu->info.bit_M = 1;
         atu->info.bit_R = 1;
+        if (atu->prox!=NULL){//Condicional para verificar se o próximo nó é diferênte de nulo
+            atu = atu->prox;// Avançando a lista para o proximo nó
+        } else {
+            atu = lista;// Voltando a lista para o primeiro nó 
+        }
+        *pag_atual = atu->info.id_pagina; // Pegando o valor do id da proxima pagina
         return;
     }
 }

@@ -42,7 +42,7 @@ int main (int argc, char *argv[]){
             printf("--------------------------------------\n");
             sleep(1);
             end = time(NULL);
-            wsclock(l, difftime(end, start), num_pages, start);
+            wsclock(l, difftime(end, start), &pag_atual, num_pages, start);
             printf("--------------------------------------\n");
             end_evento = time(NULL);
             printf("Tempo de execução da troca: %.1lf\n", difftime(end_evento, start_evento));
