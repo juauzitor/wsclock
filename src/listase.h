@@ -4,13 +4,13 @@
 #include <stdlib.h>
 #include <time.h>
 
-#define TAU 5
+#define TAU 10
 
 typedef struct{
-		int id_pagina;
-        double ultimo_uso;
+		int id_pagina; // Numero de identificação da pagina
+        double ultimo_uso; // Ultimo momento que a pagina foi referênciada
         int bit_R; // Bit de referencia
-        int bit_M; // Bit de sujeira
+        int bit_M; // Bit de sujeira~
 	}pagina;
 	
 typedef pagina tp_item;

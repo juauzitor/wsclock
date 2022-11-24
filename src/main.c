@@ -6,15 +6,15 @@
 int main (int argc, char *argv[]){
     time_t start, end;
     start = time(NULL);
-    int num_pages = 5, op=0, id_pagina, pag_atual=0;
-
+    int num_pages = 0, op=0, id_pagina, pag_atual=0;
     tp_listase *l, *atu;
     tp_item e;
-    int n, m;
     l = inicializa_listase();
-
+    
+    printf("Digite o numéro de pagnias que deseja: ");
+    scanf("%d", &num_pages);
     for (int i = 0; i < num_pages; i++){
-        sleep(1);
+        sleep(.7);
         e.id_pagina = i;
         end = time(NULL);
         e.ultimo_uso = difftime(end, start);
