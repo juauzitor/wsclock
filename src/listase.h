@@ -104,65 +104,67 @@ void clean_bit_m(tp_listase *lista){
 }
 
 void wsclock(tp_listase *lista, double tempo_total, int id, time_t start){
-    tp_listase *ant, *atu;
+    tp_listase *atu;
     time_t end;
-    int pag_atual = id - 1;
-    atu=busca_listase(lista, pag_atual);
+    int pag_atual = id - 1; // Pagina em que o ponteiro do relógio está
+    atu=busca_listase(lista, pag_atual); // Alocar o nó em que o ponteiro está
     int count_clean=0, saida=0;
-    while (saida == 0 || atu->info.id_pagina != pag_atual){
-        if (atu->info.bit_R == 1){
+    while (saida == 0 || atu->info.id_pagina != pag_atual){// Laço para substituição das páginas
+        if (atu->info.bit_R == 1){// Condicional para verificar se o bit referêncial é igual a 1
             printf("Pagina atual:\n[id: %i|ultimo uso: %.1lf|bit R: %i]\n", atu->info.id_pagina,atu->info.ultimo_uso,atu->info.bit_R);
-            clean_bit_r(atu);
-            ant = atu;
-            if (atu->prox!=NULL){
-                atu = atu->prox;
+            clean_bit_r(atu);// Lipando o bit de referência da pagina
+            if (atu->prox!=NULL){//Condicional para verificar se o próximo nó é diferênte de nulo
+                atu = atu->prox;// Avançando a lista para o proximo nó
             } else {
-                atu = lista;
+                atu = lista;// Voltando a lista para o primeiro nó 
             }            
-            saida = 1;
-        } else if(atu->info.bit_R == 0){
-            if ((tempo_total-atu->info.ultimo_uso)>TAU){
-                if (atu->info.bit_M == 1){
+            saida = 1;// Variavel para funcionamento correto do laço condicional
+        } else if(atu->info.bit_R == 0){// Caso bit de refência esteja zerado
+            if ((tempo_total-atu->info.ultimo_uso)>TAU){// Verificação da idade da pagina em relação a TAU
+                if (atu->info.bit_M == 1){// Condicional para verificar se a pagina ainda está suja
                     printf("Pagina atual:\n[id: %i|ultimo uso: %.1lf|bit R: %i]\n", atu->info.id_pagina,atu->info.ultimo_uso,atu->info.bit_R);
-                    clean_bit_m(atu);
-                    count_clean++;
-                    if (atu->prox!=NULL){
-                        atu = atu->prox;
+                    clean_bit_m(atu);// Limpando a sujeira da pagina
+                    count_clean++; // Variavel que indica se alguma pagina foi limpa nessa passada
+                    if (atu->prox!=NULL){//Condicional para verificar se o próximo nó é diferênte de nulo
+                        atu = atu->prox;// Avançando a lista para o proximo nó
                     } else {
-                        atu = lista;
-                    }            
+                        atu = lista;// Voltando a lista para o primeiro nó 
+                    }
+                    saida = 1; // Variavel para funcionamento correto do laço condicional
                 saida = 1;
-                } else {
+                } else {// Caso a pagina esteja limpa ela será subistituida
                     printf("--------------------------------------\n");
                     printf("Pagina subistituida:\n[id: %i|ultimo uso: %.1lf|bit R: %i]\n", atu->info.id_pagina,atu->info.ultimo_uso,atu->info.bit_R);
                     printf("--------------------------------------\n");
-                    end = time(NULL);
+                    end = time(NULL);// Zerando o final do cronometro
+                    // Sustituição dos valores da pagina para os valores das novas paginas
                     atu->info.id_pagina = id;
                     atu->info.ultimo_uso = difftime(end, start);
                     atu->info.bit_M = 1;
                     atu->info.bit_R = 1;
-                    return;
+                    return;// Encerramento da função
                 }
-            } else {
+            } else {// Caso a idade da pagina seja menor que o TAU
                 printf("Pagina atual:\n[id: %i|ultimo uso: %.1lf|bit R: %i]\n", atu->info.id_pagina,atu->info.ultimo_uso,atu->info.bit_R);
-                if (atu->prox!=NULL){
-                    atu = atu->prox;
+                if (atu->prox!=NULL){//Condicional para verificar se o próximo nó é diferênte de nulo
+                    atu = atu->prox;// Avançando a lista para o proximo nó
                 } else {
-                    atu = lista;
+                    atu = lista;// Voltando a lista para o primeiro nó 
                 }            
-                saida = 1;
+                saida = 1;// Variavel para funcionamento correto do laço condicional
             }
         }
     }
-    atu=busca_listase(lista, pag_atual);
+    atu=busca_listase(lista, pag_atual);// Resetando a lista para o começo de onde estava o ponteiro inicialmente
     saida=0;
-    if (count_clean > 0){
-        while (saida == 0 || atu->info.id_pagina != pag_atual){
+    if (count_clean > 0){// Verificando se ouve a limpeza de alguma pagina
+        while (saida == 0 || atu->info.id_pagina != pag_atual){// Busca a pagina até substituila
             if (atu->info.bit_M == 0){
                 printf("--------------------------------------\n");
                 printf("Pagina subistituida:\n[id: %i|ultimo uso: %.1lf|bit R: %i]\n", atu->info.id_pagina,atu->info.ultimo_uso,atu->info.bit_R);
                 printf("--------------------------------------\n");
                 end = time(NULL);
+                // Sustituição dos valores da pagina para os valores das novas paginas
                 atu->info.id_pagina = id;
                 atu->info.ultimo_uso = difftime(end, start);
                 atu->info.bit_M = 1;
@@ -176,11 +178,12 @@ void wsclock(tp_listase *lista, double tempo_total, int id, time_t start){
                 atu = lista;
             } 
         }
-    } else {
+    } else {// Caso não tenha sido possivel substituir nenhuma pagina com as exigencias, forçando a subistituir a primeira pagina que aparecer
         printf("--------------------------------------\n");
         printf("Pagina subistituida:\n[id: %i|ultimo uso: %.1lf|bit R: %i]\n", atu->info.id_pagina,atu->info.ultimo_uso,atu->info.bit_R);
         printf("--------------------------------------\n");
         end = time(NULL);
+        // Sustituição dos valores da pagina para os valores das novas paginas
         atu->info.id_pagina = id;
         atu->info.ultimo_uso = difftime(end, start);
         atu->info.bit_M = 1;
